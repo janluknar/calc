@@ -32,7 +32,7 @@ keys.addEventListener('click', e => {
         Array.from(key.parentNode.children)
             .forEach(k => k.classList.remove('is-depressed'))
         if (!action) {
-            if (displayedNum === '0' || previousKeyType === 'operator') {
+            if (displayedNum === '0' || previousKeyType === 'operator' || previousKeyType === 'calculate') {
               display.textContent = keyContent
             } 
             else {
@@ -50,7 +50,7 @@ keys.addEventListener('click', e => {
             const operator = calculator.dataset.operator
             const secondValue = displayedNum
 
-            if (firstValue && operator && previousKeyType !== 'operator') {
+            if (firstValue && operator && previousKeyType !== 'operator' && previousKeyType !== 'calculate') {
                 const calcValue = calculate(firstValue, operator, secondValue)
                 display.textContent = calcValue
 
@@ -67,15 +67,29 @@ keys.addEventListener('click', e => {
           if (action === 'decimal') {
             if (!displayedNum.includes('.') && previousKeyType !== 'operator') {
               display.textContent = displayedNum + '.'
-            } else if (previousKeyType === 'operator') {
+            } else if (previousKeyType === 'operator' || previousKeyType === 'calculate') {
               display.textContent = '0.'
             }  
           calculator.dataset.previousKeyType = 'decimal'
           }
           
           if (action === 'clear') {
-            console.log('clear key!')
+            if (key.textContent === 'AC') {
+                calculator.dataset.firstValue = ''
+                calculator.dataset.modValue = ''
+                calculator.dataset.operator = ''
+                calculator.dataset.previousKeyType = ''
+              } else {
+                key.textContent = 'AC'
+              }
+              
+            display.textContent = 0
             calculator.dataset.previousKeyType = 'clear'
+          }
+
+          if (action !== 'clear') {
+            const clearButton = calculator.querySelector('[data-action=clear]')
+            clearButton.textContent = 'CE'
           }
           
           if (action === 'calculate') {
